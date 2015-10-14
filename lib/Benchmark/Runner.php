@@ -169,7 +169,6 @@ class Runner
         $iterationCount = null === $this->iterationsOverride ? $subject->getIterations() : $this->iterationsOverride;
         $revolutionCounts = $this->revsOverride ? array($this->revsOverride) : $subject->getRevs();
         $parameterSets = $this->parametersOverride ? array(array($this->parametersOverride)) : $subject->getParameterSets() ?: array(array(array()));
-
         $paramsIterator = new CartesianParameterIterator($parameterSets);
 
         foreach ($paramsIterator as $parameters) {
@@ -228,7 +227,8 @@ class Runner
         $result = $this->executor->execute(
             $subject,
             $revolutionCount,
-            $parameterSet
+            $parameterSet,
+            $this->profile
         );
 
         $iterationEl->setAttribute('time', $result['time']);

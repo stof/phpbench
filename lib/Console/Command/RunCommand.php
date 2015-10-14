@@ -71,6 +71,7 @@ EOT
         $this->addOption('iterations', null, InputOption::VALUE_REQUIRED, 'Override number of iteratios to run in (all) benchmarks');
         $this->addOption('revs', null, InputOption::VALUE_REQUIRED, 'Override number of revs (revolutions) on (all) benchmarks');
         $this->addOption('progress', 'l', InputOption::VALUE_REQUIRED, 'Progress logger to use, one of <comment>dots</comment>, <comment>classdots</comment>');
+        $this->addOption('profiler', null, InputOption::VALUE_REQUIRED, 'Generate profile data', 'xdebug');
     }
 
     public function execute(InputInterface $input, OutputInterface $output)

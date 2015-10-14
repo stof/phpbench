@@ -41,3 +41,13 @@ function join_node_values($delimiter, $list)
 
     return implode($delimiter, $els);
 }
+
+function replace($search, $replace, $subject)
+{
+    return str_replace($search, $replace, $subject);
+}
+
+function repeat($string, $multiplier)
+{
+    return str_repeat($string, $multiplier);
+}

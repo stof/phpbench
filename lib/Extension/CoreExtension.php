@@ -245,7 +245,9 @@ class CoreExtension implements ExtensionInterface
             $resolver = new XPathResolver();
             $resolver->registerFunction('parameters_to_json', 'PhpBench\Report\Dom\functions\parameters_to_json');
             $resolver->registerFunction('class_name', 'PhpBench\Report\Dom\functions\class_name');
+            $resolver->registerFunction('str_replace', 'PhpBench\Report\Dom\functions\replace');
             $resolver->registerFunction('join_node_values', 'PhpBench\Report\Dom\functions\join_node_values');
+            $resolver->registerFunction('str_repeat', 'PhpBench\Report\Dom\functions\repeat');
 
             return $resolver;
         });

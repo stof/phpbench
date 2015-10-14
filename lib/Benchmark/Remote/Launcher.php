@@ -38,7 +38,16 @@ class Launcher
         $this->configDir = dirname($configPath);
     }
 
-    public function launch($template, array $parameters)
+    /**
+     * Launch the given template with the given parameters.
+     * 
+     * PHP ini settings can be passed to the PHP executable as a third argument.
+     *
+     * @param string $template
+     * @param array $parameters
+     * @param array $iniEntries
+     */
+    public function launch($template, array $parameters, array $iniEntries = array())
     {
         $bootstrap = $this->getBootstrapPath();
         if ($bootstrap && !file_exists($bootstrap)) {
@@ -72,7 +81,13 @@ class Launcher
         $scriptPath = tempnam(sys_get_temp_dir(), 'PhpBench');
         file_put_contents($scriptPath, $script);
 
-        $process = new Process(PHP_BINARY . ' ' . $scriptPath);
+        $iniStrings = array();
+        foreach ($iniEntries as $key => $value) {
+            $iniStrings[] = '-d ' . $key . '=' . $value;
+        }
+        $iniString = implode(' ', $iniStrings);
+
+        $process = new Process(PHP_BINARY . ' ' . $iniString . ' ' . $scriptPath);
         $process->run();
         unlink($scriptPath);
 

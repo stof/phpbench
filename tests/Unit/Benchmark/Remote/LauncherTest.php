@@ -32,6 +32,30 @@ class LauncherTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * It should pass ini settings to the PHP executable
+     *
+     * Note: This test disables the \stdClass in the spawned PHP instance, producing an error.
+     */
+    public function testExecuteIniSettings()
+    {
+        $exception = null;
+        $launcher = new Launcher(__DIR__ . '/../../../../vendor/autoload.php', '.');
+        try {
+            $launcher->launch(__DIR__ . '/template/foo.template', array(
+                'foo' => 'bar',
+            ), array(
+                'disable_classes' => 'stdClass',
+            ));
+            $this->fail();
+        } catch (\Exception $exception) {
+        }
+
+        $this->assertNotNull($exception);
+        $this->assertContains('security reasons', $exception->getMessage());
+    }
+
+
+    /**
      * It should throw an exception if the script is invalid.
      *
      * @expectedException RuntimeException

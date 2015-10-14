@@ -28,8 +28,6 @@ class Executor
 
     /**
      * @param Launcher $launcher
-     * @param string $configPath
-     * @param string $bootstrap
      */
     public function __construct(Launcher $launcher)
     {
@@ -41,7 +39,7 @@ class Executor
      * @param int $revolutions
      * @param array $parameters
      */
-    public function execute(SubjectMetadata $subject, $revolutions = 0, array $parameters = array())
+    public function execute(SubjectMetadata $subject, $revolutions = 0, array $parameters = array(), $profiler = null)
     {
         $tokens = array(
             'class' => $subject->getBenchmarkMetadata()->getClass(),
