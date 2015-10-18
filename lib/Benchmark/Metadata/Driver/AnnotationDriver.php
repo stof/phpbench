@@ -147,6 +147,10 @@ class AnnotationDriver implements DriverInterface
         if ($annotation instanceof Annotations\Skip) {
             $metadata->setSkip(true);
         }
+
+        if ($annotation instanceof Annotations\Executor) {
+            $metadata->setExecutor($annotation->getExecutor());
+        }
     }
 
     private function resolveValue(ArrayAnnotation $annotation, array $currentValues, array $annotationValues)

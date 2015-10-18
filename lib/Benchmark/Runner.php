@@ -16,6 +16,7 @@ use PhpBench\Benchmark\Metadata\SubjectMetadata;
 use PhpBench\PhpBench;
 use PhpBench\Progress\Logger\NullLogger;
 use PhpBench\Progress\LoggerInterface;
+use PhpBench\Benchmark\ExecutorFactory;
 
 /**
  * The benchmark runner.
@@ -30,7 +31,7 @@ class Runner
     private $parametersOverride;
     private $subjectsOverride = array();
     private $groups = array();
-    private $executor;
+    private $executorFactory;
 
     /**
      * @param CollectionBuilder $collectionBuilder
@@ -39,12 +40,12 @@ class Runner
      */
     public function __construct(
         CollectionBuilder $collectionBuilder,
-        Executor $executor,
+        ExecutorFactory $executorFactory,
         $configPath
     ) {
         $this->logger = new NullLogger();
         $this->collectionBuilder = $collectionBuilder;
-        $this->executor = $executor;
+        $this->executorFactory = $executorFactory;
         $this->configPath = $configPath;
     }
 
@@ -224,11 +225,10 @@ class Runner
 
     private function runIteration(SubjectMetadata $subject, $revolutionCount, $parameterSet, \DOMElement $iterationEl)
     {
-        $result = $this->executor->execute(
+        $result = $this->executorFactory->getExecutor($subject->getExecutor())->execute(
             $subject,
             $revolutionCount,
-            $parameterSet,
-            $this->profile
+            $parameterSet
         );
 
         $iterationEl->setAttribute('time', $result['time']);

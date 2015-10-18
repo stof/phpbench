@@ -57,6 +57,11 @@ abstract class AbstractMetadata
     private $skip = false;
 
     /**
+     * @var string
+     */
+    private $executor = 'microtime';
+
+    /**
      * @param mixed $class
      */
     public function __construct($class)
@@ -145,4 +150,15 @@ abstract class AbstractMetadata
     {
         $this->skip = $skip;
     }
+
+    public function getExecutor() 
+    {
+        return $this->executor;
+    }
+    
+    public function setExecutor($executor)
+    {
+        $this->executor = $executor;
+    }
+    
 }

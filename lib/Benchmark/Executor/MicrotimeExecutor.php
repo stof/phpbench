@@ -9,17 +9,18 @@
  * file that was distributed with this source code.
  */
 
-namespace PhpBench\Benchmark;
+namespace PhpBench\Benchmark\Executor;
 
 use PhpBench\Benchmark\Metadata\SubjectMetadata;
 use PhpBench\Benchmark\Remote\Launcher;
+use PhpBench\Benchmark\ExecutorInterface;
 
 /**
  * This class generates a benchmarking script and places it in the systems
  * temp. directory and then executes it. The generated script then returns the
  * time taken to execute the benchmark and the memory consumed.
  */
-class Executor
+class MicrotimeExecutor implements ExecutorInterface
 {
     /**
      * @var Launcher
@@ -28,6 +29,8 @@ class Executor
 
     /**
      * @param Launcher $launcher
+     * @param string $configPath
+     * @param string $bootstrap
      */
     public function __construct(Launcher $launcher)
     {
@@ -39,7 +42,7 @@ class Executor
      * @param int $revolutions
      * @param array $parameters
      */
-    public function execute(SubjectMetadata $subject, $revolutions = 0, array $parameters = array(), $profiler = null)
+    public function execute(SubjectMetadata $subject, $revolutions = 1, array $parameters = array())
     {
         $tokens = array(
             'class' => $subject->getBenchmarkMetadata()->getClass(),
@@ -51,7 +54,7 @@ class Executor
             'parameters' => var_export($parameters, true),
         );
 
-        $result = $this->launcher->launch(__DIR__ . '/Remote/template/runner.template', $tokens);
+        $result = $this->launcher->launch(__DIR__ . '/template/microtime.template', $tokens);
 
         return $result;
     }
