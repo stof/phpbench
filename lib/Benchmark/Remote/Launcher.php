@@ -46,8 +46,9 @@ class Launcher
      * @param string $template
      * @param array $parameters
      * @param array $iniEntries
+     * @param string $wrapper
      */
-    public function launch($template, array $parameters, array $iniEntries = array())
+    public function launch($template, array $parameters, array $iniEntries = array(), $wrapper = null)
     {
         $bootstrap = $this->getBootstrapPath();
         if ($bootstrap && !file_exists($bootstrap)) {
@@ -87,13 +88,16 @@ class Launcher
         }
         $iniString = implode(' ', $iniStrings);
 
-        $process = new Process(PHP_BINARY . ' ' . $iniString . ' ' . $scriptPath);
+        $binary = $wrapper ? $wrapper . ' ' . PHP_BINARY : PHP_BINARY;
+
+        $process = new Process($binary . ' ' . $iniString . ' ' . $scriptPath);
         $process->run();
         unlink($scriptPath);
 
         if (false === $process->isSuccessful()) {
             throw new \RuntimeException(sprintf(
-                'Could not launch script: %s %s',
+                'Could not launch script for template "%s": %s %s',
+                $template,
                 $process->getErrorOutput(),
                 $process->getOutput()
             ));

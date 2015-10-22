@@ -27,6 +27,7 @@ class Runner
     private $collectionBuilder;
     private $iterationsOverride;
     private $revsOverride;
+    private $executorOverride;
     private $configPath;
     private $parametersOverride;
     private $subjectsOverride = array();
@@ -93,6 +94,17 @@ class Runner
     {
         $this->parametersOverride = $parameters;
     }
+
+    /**
+     * Override the executor to use
+     *
+     * @param string $executor
+     */
+    public function overrideExecutor($executor)
+    {
+        $this->executorOverride = $executor;
+    }
+    
 
     /**
      * Whitelist of groups to execute.
@@ -225,13 +237,17 @@ class Runner
 
     private function runIteration(SubjectMetadata $subject, $revolutionCount, $parameterSet, \DOMElement $iterationEl)
     {
-        $result = $this->executorFactory->getExecutor($subject->getExecutor())->execute(
+        $executor = $this->executorOverride ?: $subject->getExecutor();
+        $executor = $this->executorFactory->getExecutor($executor);
+        $result = $executor->execute(
             $subject,
             $revolutionCount,
-            $parameterSet
+            $parameterSet,
+            $executor->getDefaultConfig()
         );
 
         $iterationEl->setAttribute('time', $result['time']);
         $iterationEl->setAttribute('memory', $result['memory']);
+        $iterationEl->setAttribute('calls', $result['calls']);
     }
 }

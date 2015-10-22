@@ -1,6 +1,9 @@
 {
     "bootstrap": "../vendor/autoload.php",
     "path": "./",
+    "extensions": [
+        "PhpBench\\Extensions\\XDebug\\XDebugExtension"
+    ],
     "progress": "verbose",
     "outputs": {
         "console_example": {
