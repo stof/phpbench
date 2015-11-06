@@ -22,6 +22,7 @@ Contents:
    report-generators
    report-renderers
    configuration
+   faq
 
 Indices and tables
 ==================
