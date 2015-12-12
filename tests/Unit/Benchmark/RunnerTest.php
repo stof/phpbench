@@ -216,6 +216,35 @@ class RunnerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * It should set the warmup attribute in the DOM.
+     */
+    public function testWarmup()
+    {
+        $this->collection->getBenchmarks()->willReturn(array(
+            $this->benchmark,
+        ));
+        TestUtil::configureSubject($this->subject, array(
+            'warmup' => 50,
+        ));
+        $this->benchmark->getSubjectMetadatas()->willReturn(array(
+            $this->subject->reveal(),
+        ));
+        TestUtil::configureBenchmark($this->benchmark);
+        $this->executor->execute(Argument::type('PhpBench\Benchmark\Iteration'))
+            ->shouldBeCalledTimes(2)
+            ->willReturn(new IterationResult(10, 10));
+
+        $result = $this->runner->runAll('context', __DIR__);
+
+        $this->assertInstanceOf('PhpBench\Benchmark\SuiteDocument', $result);
+        $this->assertTrue($result->evaluate('count(//iteration[@warmup="50"]) = 1'), true);
+
+        $this->runner->overrideWarmup(100);
+        $result = $this->runner->runAll('context', __DIR__);
+        $this->assertTrue($result->evaluate('count(//iteration[@warmup="100"]) = 1'), true);
+    }
+
+    /**
      * It should serialize the retry threshold.
      */
     public function testRetryThreshold()

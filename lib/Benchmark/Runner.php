@@ -26,6 +26,7 @@ class Runner
     private $collectionBuilder;
     private $iterationsOverride;
     private $revsOverride;
+    private $warmupOverride;
     private $executorOverride;
     private $configPath;
     private $parametersOverride;
@@ -81,6 +82,16 @@ class Runner
     public function overrideIterations($iterations)
     {
         $this->iterationsOverride = $iterations;
+    }
+
+    /**
+     * Override the number of warmup revolutions.
+     *
+     * @param int
+     */
+    public function overrideWarmup($revs)
+    {
+        $this->warmupOverride = $revs;
     }
 
     /**
@@ -236,6 +247,7 @@ class Runner
     private function runSubject(SubjectMetadata $subject, \DOMElement $subjectEl)
     {
         $iterationCount = null === $this->iterationsOverride ? $subject->getIterations() : $this->iterationsOverride;
+        $warmupCount = null === $this->warmupOverride ? $subject->getWarmup() : $this->warmupOverride;
         $revolutionCount = $this->revsOverride ?: $subject->getRevs();
         $parameterSets = $this->parametersOverride ? array(array($this->parametersOverride)) : $subject->getParameterSets() ?: array(array(array()));
         $paramsIterator = new CartesianParameterIterator($parameterSets);
@@ -249,7 +261,7 @@ class Runner
             }
 
             $subjectEl->appendChild($variantEl);
-            $this->runIterations($subject, $iterationCount, $revolutionCount, $parameters, $variantEl);
+            $this->runIterations($subject, $iterationCount, $revolutionCount, $warmupCount, $parameters, $variantEl);
         }
     }
 
@@ -280,13 +292,13 @@ class Runner
         ));
     }
 
-    private function runIterations(SubjectMetadata $subject, $iterationCount, $revolutionCount, ParameterSet $parameterSet, \DOMElement $variantEl)
+    private function runIterations(SubjectMetadata $subject, $iterationCount, $revolutionCount, $warmupCount, ParameterSet $parameterSet, \DOMElement $variantEl)
     {
         $iterationCollection = new IterationCollection($subject, $parameterSet, $this->retryThreshold);
 
         $this->logger->iterationsStart($iterationCollection);
 
-        $iterations = $iterationCollection->spawnIterations($iterationCount, $revolutionCount);
+        $iterations = $iterationCollection->spawnIterations($iterationCount, $revolutionCount, $warmupCount);
         foreach ($iterations as $iteration) {
             $this->runIteration($iteration, $subject->getSleep());
             $iterationCollection->add($iteration);
@@ -311,6 +323,7 @@ class Runner
         foreach ($iterationCollection as $iteration) {
             $iterationEl = $variantEl->ownerDocument->createElement('iteration');
             $iterationEl->setAttribute('revs', $iteration->getRevolutions());
+            $iterationEl->setAttribute('warmup', $iteration->getWarmup());
             $iterationEl->setAttribute('time-net', $iteration->getResult()->getTime());
             $iterationEl->setAttribute('time', $iteration->getResult()->getTime() / $iteration->getRevolutions());
             $iterationEl->setAttribute('z-value', $iteration->getZValue());

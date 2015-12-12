@@ -53,6 +53,7 @@ class MicrotimeExecutor implements ExecutorInterface
             'beforeMethods' => var_export($subject->getBeforeMethods(), true),
             'afterMethods' => var_export($subject->getAfterMethods(), true),
             'parameters' => var_export($iteration->getParameters()->getArrayCopy(), true),
+            'warmup' => $iteration->getWarmup() ?: 0,
         );
 
         $payload = $this->launcher->payload(__DIR__ . '/template/microtime.template', $tokens);

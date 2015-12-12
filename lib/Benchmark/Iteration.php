@@ -19,6 +19,7 @@ use PhpBench\Benchmark\Metadata\SubjectMetadata;
 class Iteration
 {
     private $subject;
+    private $warmup;
     private $revolutions;
     private $parameters = array();
     private $index;
@@ -38,12 +39,14 @@ class Iteration
         $index,
         SubjectMetadata $subject,
         $revolutions,
-        ParameterSet $parameters
+        ParameterSet $parameters,
+        $warmup
     ) {
         $this->index = $index;
         $this->subject = $subject;
         $this->revolutions = $revolutions;
         $this->parameters = $parameters;
+        $this->warmup = $warmup;
     }
 
     /**
@@ -175,5 +178,13 @@ class Iteration
     public function getRejectionCount()
     {
         return $this->rejectionCount;
+    }
+
+    /**
+     * Return the number of warmup revolutions
+     */
+    public function getWarmup()
+    {
+        return $this->warmup;
     }
 }

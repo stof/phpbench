@@ -66,9 +66,10 @@ EOT
         $this->addOption('group', array(), InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Group to run (can be specified multiple times)');
         $this->addOption('dump-file', 'd', InputOption::VALUE_OPTIONAL, 'Dump XML result to named file');
         $this->addOption('dump', null, InputOption::VALUE_NONE, 'Dump XML result to stdout and suppress all other output');
-        $this->addOption('parameters', null, InputOption::VALUE_REQUIRED, 'Override parameters to use in (all) benchmarks');
-        $this->addOption('iterations', null, InputOption::VALUE_REQUIRED, 'Override number of iteratios to run in (all) benchmarks');
-        $this->addOption('revs', null, InputOption::VALUE_REQUIRED, 'Override number of revs (revolutions) on (all) benchmarks');
+        $this->addOption('parameters', null, InputOption::VALUE_REQUIRED, 'Override parameters to use in all benchmarks');
+        $this->addOption('iterations', null, InputOption::VALUE_REQUIRED, 'Override number of iteratios to run in all benchmarks');
+        $this->addOption('revs', null, InputOption::VALUE_REQUIRED, 'Override number of revs (revolutions) on all benchmarks');
+        $this->addOption('warmup', null, InputOption::VALUE_REQUIRED, 'Override number of warmup revolutions on all benchmarks');
         $this->addOption('progress', 'l', InputOption::VALUE_REQUIRED, 'Progress logger to use, one of <comment>dots</comment>, <comment>classdots</comment>');
         $this->addOption('retry-threshold', 'r', InputOption::VALUE_REQUIRED, 'Set target allowable deviation', null);
 
@@ -96,6 +97,7 @@ EOT
         $inputPath = $input->getArgument('path');
         $retryThreshold = $input->getOption('retry-threshold');
         $sleep = $input->getOption('sleep');
+        $warmup = $input->getOption('warmup');
 
         $path = $inputPath ?: $this->benchPath;
 
@@ -123,7 +125,7 @@ EOT
         $progressLogger = $this->loggerRegistry->getProgressLogger($progressLoggerName);
         $progressLogger->setOutput($consoleOutput);
 
-        $suiteResult = $this->executeBenchmarks($contextName, $path, $filters, $groups, $parameters, $iterations, $revs, $configPath, $retryThreshold, $sleep, $progressLogger);
+        $suiteResult = $this->executeBenchmarks($contextName, $path, $filters, $groups, $parameters, $iterations, $revs, $warmup, $configPath, $retryThreshold, $sleep, $progressLogger);
         if ($dumpfile) {
             $xml = $suiteResult->dump();
             file_put_contents($dumpfile, $xml);
@@ -146,6 +148,7 @@ EOT
         $parameters,
         $iterations,
         $revs,
+        $warmup,
         $configPath,
         $retryThreshold,
         $sleep,
@@ -165,6 +168,10 @@ EOT
 
         if ($revs) {
             $this->runner->overrideRevs($revs);
+        }
+
+        if ($warmup) {
+            $this->runner->overrideWarmup($warmup);
         }
 
         if ($filters) {

@@ -197,12 +197,12 @@ class IterationCollection implements \IteratorAggregate
      *
      * @return Iteration[]
      */
-    public function spawnIterations($count, $revolutionCount)
+    public function spawnIterations($count, $revolutionCount, $warmup = 0)
     {
         $iterations = array();
 
         for ($index = 0; $index < $count; $index++) {
-            $iterations[] = new Iteration($index, $this->subject, $revolutionCount, $this->parameterSet);
+            $iterations[] = new Iteration($index, $this->subject, $revolutionCount, $this->parameterSet, $warmup);
         }
 
         return $iterations;

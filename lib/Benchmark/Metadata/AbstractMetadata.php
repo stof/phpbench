@@ -47,6 +47,11 @@ abstract class AbstractMetadata
     private $revs = 1;
 
     /**
+     * @var int
+     */
+    private $warmup;
+
+    /**
      * @var string
      */
     private $class;
@@ -160,4 +165,15 @@ abstract class AbstractMetadata
     {
         $this->sleep = $sleep;
     }
+
+    public function getWarmup() 
+    {
+        return $this->warmup;
+    }
+    
+    public function setwarmup($warmup)
+    {
+        $this->warmup = $warmup;
+    }
+    
 }

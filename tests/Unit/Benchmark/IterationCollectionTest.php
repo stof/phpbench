@@ -47,6 +47,19 @@ class IterationCollectionTest extends \PHPUnit_Framework_TestCase
         }
     }
 
+
+    /**
+     * It should spawn iterations
+     */
+    public function testSpawnIterations()
+    {
+        $iterationCollection = new IterationCollection($this->subject->reveal(), $this->parameterSet->reveal());
+        $iterations = $iterationCollection->spawnIterations(5, 100, 10);
+
+        $this->assertCount(5, $iterations);
+        $this->assertContainsOnlyInstancesOf('PhpBench\Benchmark\Iteration', $iterations);
+    }
+
     /**
      * It should calculate the stats of each iteration from the mean.
      */
